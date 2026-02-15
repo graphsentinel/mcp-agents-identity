@@ -1,0 +1,248 @@
+{
+  "realm": "mcp-identity",
+  "enabled": true,
+  "displayName": "MCP Identity Realm",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "attributes": {
+    "frontendUrl": "http://localhost:8180"
+  },
+  "roles": {
+    "realm": [
+      {
+        "name": "mcp-agent-trusted",
+        "description": "Full access trusted agent"
+      },
+      {
+        "name": "mcp-agent-semi-trusted",
+        "description": "Limited access semi-trusted agent"
+      },
+      {
+        "name": "mcp-agent-untrusted",
+        "description": "Read-only untrusted agent"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "mcp-agent-service",
+      "enabled": true,
+      "clientAuthenticatorType": "client-jwt",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "dpop.bound.access.tokens": "true",
+        "access.token.lifespan": "300",
+        "token.endpoint.auth.signing.alg": "RS256",
+        "jwt.credential.public.key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuoADY3llMiOj8UimGUob\nEeRFnjRJx+xVSI4dL5vx7daqt+pWtrKK86sZRFGnqYBnBKwVGclpQtTSEV3wr+xL\na6q800QTY7ZqUnFGaUEhBK59J9tbVh7NUVccOK6Cw6pjd0jCqHFYQOWxP+a+TWmL\nUxEATGQ0Jlp1UwwAfwig9zdDNbQiKy4jQr3z0rW6oNNuietT02w+hTdqUfz9AEfo\nWvxSZdyP79qYZPqxEgH+5cMkzb7TyWVpvDnhyEmpTNBUL0runbsRvHtWUpGd1Cbz\np0GtbjXQelo1VQIudvmW0lJALtxFgKK0U6vMnHBh5Zbfr0Axr9vx9LdrWGOLDHKI\nIwIDAQAB\n-----END PUBLIC KEY-----"
+      },
+      "protocolMappers": [
+        {
+          "name": "spiffe-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.name": "spiffe_id",
+            "claim.value": "spiffe://mcp-identity.local/ns/mcp-agents/sa/mcp-agent-service",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "client-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "config": {
+            "claim.name": "client_id",
+            "user.session.note": "client_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "trust-level-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "claim.name": "trust_level",
+            "user.attribute": "trust_level",
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "mcp-agent-trusted",
+      "enabled": true,
+      "clientAuthenticatorType": "client-jwt",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "dpop.bound.access.tokens": "true",
+        "trust_level": "trusted",
+        "token.endpoint.auth.signing.alg": "RS256",
+        "jwt.credential.public.key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuoADY3llMiOj8UimGUob\nEeRFnjRJx+xVSI4dL5vx7daqt+pWtrKK86sZRFGnqYBnBKwVGclpQtTSEV3wr+xL\na6q800QTY7ZqUnFGaUEhBK59J9tbVh7NUVccOK6Cw6pjd0jCqHFYQOWxP+a+TWmL\nUxEATGQ0Jlp1UwwAfwig9zdDNbQiKy4jQr3z0rW6oNNuietT02w+hTdqUfz9AEfo\nWvxSZdyP79qYZPqxEgH+5cMkzb7TyWVpvDnhyEmpTNBUL0runbsRvHtWUpGd1Cbz\np0GtbjXQelo1VQIudvmW0lJALtxFgKK0U6vMnHBh5Zbfr0Axr9vx9LdrWGOLDHKI\nIwIDAQAB\n-----END PUBLIC KEY-----"
+      },
+      "protocolMappers": [
+        {
+          "name": "spiffe-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.name": "spiffe_id",
+            "claim.value": "spiffe://mcp-identity.local/ns/mcp-agents/sa/mcp-agent-trusted",
+            "access.token.claim": "true",
+            "id.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "mcp-agent-semi-trusted",
+      "enabled": true,
+      "clientAuthenticatorType": "client-jwt",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "dpop.bound.access.tokens": "true",
+        "trust_level": "semi-trusted",
+        "token.endpoint.auth.signing.alg": "RS256",
+        "jwt.credential.public.key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuoADY3llMiOj8UimGUob\nEeRFnjRJx+xVSI4dL5vx7daqt+pWtrKK86sZRFGnqYBnBKwVGclpQtTSEV3wr+xL\na6q800QTY7ZqUnFGaUEhBK59J9tbVh7NUVccOK6Cw6pjd0jCqHFYQOWxP+a+TWmL\nUxEATGQ0Jlp1UwwAfwig9zdDNbQiKy4jQr3z0rW6oNNuietT02w+hTdqUfz9AEfo\nWvxSZdyP79qYZPqxEgH+5cMkzb7TyWVpvDnhyEmpTNBUL0runbsRvHtWUpGd1Cbz\np0GtbjXQelo1VQIudvmW0lJALtxFgKK0U6vMnHBh5Zbfr0Axr9vx9LdrWGOLDHKI\nIwIDAQAB\n-----END PUBLIC KEY-----"
+      },
+      "protocolMappers": [
+        {
+          "name": "spiffe-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.name": "spiffe_id",
+            "claim.value": "spiffe://mcp-identity.local/ns/mcp-agents/sa/mcp-agent-semi-trusted",
+            "access.token.claim": "true",
+            "id.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "mcp-agent-untrusted",
+      "enabled": true,
+      "clientAuthenticatorType": "client-jwt",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "dpop.bound.access.tokens": "true",
+        "trust_level": "untrusted",
+        "token.endpoint.auth.signing.alg": "RS256",
+        "jwt.credential.public.key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuoADY3llMiOj8UimGUob\nEeRFnjRJx+xVSI4dL5vx7daqt+pWtrKK86sZRFGnqYBnBKwVGclpQtTSEV3wr+xL\na6q800QTY7ZqUnFGaUEhBK59J9tbVh7NUVccOK6Cw6pjd0jCqHFYQOWxP+a+TWmL\nUxEATGQ0Jlp1UwwAfwig9zdDNbQiKy4jQr3z0rW6oNNuietT02w+hTdqUfz9AEfo\nWvxSZdyP79qYZPqxEgH+5cMkzb7TyWVpvDnhyEmpTNBUL0runbsRvHtWUpGd1Cbz\np0GtbjXQelo1VQIudvmW0lJALtxFgKK0U6vMnHBh5Zbfr0Axr9vx9LdrWGOLDHKI\nIwIDAQAB\n-----END PUBLIC KEY-----"
+      },
+      "protocolMappers": [
+        {
+          "name": "spiffe-id-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.name": "spiffe_id",
+            "claim.value": "spiffe://mcp-identity.local/ns/mcp-agents/sa/mcp-agent-untrusted",
+            "access.token.claim": "true",
+            "id.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "mcp-tools",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "allowed-tools",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.name": "allowed_tools",
+            "claim.value": "[\"filesystem\", \"database\", \"api\"]",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "jsonType.label": "JSON"
+          }
+        }
+      ]
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "spiffe-federation",
+      "displayName": "SPIFFE Trust Domain",
+      "providerId": "oidc",
+      "enabled": true,
+      "trustEmail": true,
+      "config": {
+        "issuer": "https://spire-server.spire-system.svc:8443",
+        "authorizationUrl": "",
+        "tokenUrl": "",
+        "jwksUrl": "https://spire-server.spire-system.svc:8443/keys",
+        "clientId": "mcp-identity",
+        "clientAuthMethod": "private_key_jwt",
+        "syncMode": "FORCE",
+        "validateSignature": "true",
+        "useJwksUrl": "true",
+        "pkceEnabled": "false"
+      }
+    }
+  ],
+  "clientPolicies": {
+    "policies": [
+      {
+        "name": "mcp-agent-dpop-policy",
+        "description": "Enforce DPoP for all MCP agent clients",
+        "enabled": true,
+        "conditions": [
+          {
+            "condition": "client-roles",
+            "configuration": {
+              "roles": ["mcp-agent-trusted", "mcp-agent-semi-trusted", "mcp-agent-untrusted"]
+            }
+          }
+        ],
+        "profiles": ["mcp-dpop-profile"]
+      }
+    ],
+    "profiles": [
+      {
+        "name": "mcp-dpop-profile",
+        "description": "Require DPoP proof-of-possession",
+        "executors": [
+          {
+            "executor": "dpop-bind-enforcer",
+            "configuration": {}
+          }
+        ]
+      }
+    ]
+  },
+  "components": {
+    "org.keycloak.keys.KeyProvider": [
+      {
+        "name": "rsa-generated",
+        "providerId": "rsa-generated",
+        "config": {
+          "priority": ["100"],
+          "keySize": ["2048"]
+        }
+      }
+    ]
+  }
+}

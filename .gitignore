@@ -1,0 +1,18 @@
+# Videos and recordings
+videos/
+
+# Presentation slides
+presentation/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

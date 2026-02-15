@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "integration: marks tests that require a running cluster",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

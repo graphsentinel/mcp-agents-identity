@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-agent-trusted
+  namespace: mcp-agents
+  labels:
+    app: mcp-agent-trusted
+    app.kubernetes.io/component: mcp-agent
+    trust-level: trusted
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: mcp-agent-trusted
+  template:
+    metadata:
+      labels:
+        app: mcp-agent-trusted
+        app.kubernetes.io/component: mcp-agent
+        trust-level: trusted
+    spec:
+      serviceAccountName: mcp-agent-trusted
+      containers:
+        - name: mcp-agent
+          image: mcp-agent:latest
+          imagePullPolicy: Never
+          env:
+            - name: TRUST_LEVEL
+              value: "trusted"
+            - name: SPIFFE_ENDPOINT_SOCKET
+              value: "unix:///run/spire/sockets/agent.sock"
+            - name: OPA_URL
+              value: "http://opa.opa-system.svc.cluster.local:8181"
+            - name: KEYCLOAK_URL
+              value: "http://keycloak.keycloak.svc.cluster.local:8080"
+            - name: AGENT_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - containerPort: 8000
+              name: http
+          volumeMounts:
+            - name: spire-agent-socket
+              mountPath: /run/spire/sockets
+              readOnly: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      volumes:
+        - name: spire-agent-socket
+          hostPath:
+            path: /run/spire/sockets
+            type: Directory
